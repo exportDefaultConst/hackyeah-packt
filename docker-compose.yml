@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build: .  # Build from Dockerfile in current directory
+    container_name: packt-app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/projekt-zespolowy
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: wiktor
+    ports:
+      - "8081:8080"
+    networks:
+      - packt-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    container_name: packt-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: wiktor
+      POSTGRES_DB: projekt-zespolowy
+    ports:
+      - "5433:5432"
+    networks:
+      - packt-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+networks:
+  packt-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
